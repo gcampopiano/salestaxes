@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kie.api.event.rule.DebugAgendaEventListener;
-import org.kie.api.event.rule.DebugRuleRuntimeEventListener;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
@@ -17,7 +15,6 @@ import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.kie.internal.definition.KnowledgePackage;
 import org.kie.internal.io.ResourceFactory;
-import org.kie.internal.runtime.StatefulKnowledgeSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +42,8 @@ public class SalesTaxesBusinessServiceDelegate implements SalesTaxesBusinessServ
 
 	public static final String[] drlFiles = { "applicableTaxes.drl" };
 
+	public static final KnowledgeBase kbase = initKnowledgeBase();
+
 	@Override
 	public void compileReceipt(Receipt theReceipt) throws SalesTaxesException {
 
@@ -63,12 +62,28 @@ public class SalesTaxesBusinessServiceDelegate implements SalesTaxesBusinessServ
 		theReceipt.setTotalAmount(totalAmount);
 	}
 
+	private static final KnowledgeBase initKnowledgeBase() {
+		logger.info("Initing knowledge base...");
+		KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
+		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+
+		for (String ruleFile : drlFiles) {
+			logger.info(StringUtils.join("Loading file ", ruleFile, " from file system..."));
+			kbuilder.add(ResourceFactory.newClassPathResource(ruleFile, SalesTaxesBusinessServiceDelegate.class),
+					ResourceType.DRL);
+		}
+
+		Collection<KnowledgePackage> pkgs = kbuilder.getKnowledgePackages();
+		kbase.addKnowledgePackages(pkgs);
+		return kbase;
+	}
+
 	private final void applyTaxesToGoodList(List<Good> flatGoodList) throws SalesTaxesException {
 		KieSession ksession = null;
 		ArrayList<FactHandle> factHandleList = new ArrayList<>();
 		try {
 
-			ksession = this.initKSession();
+			ksession = kbase.newStatefulKnowledgeSession();
 			ksession.setGlobal("logger", logger);
 
 			for (Good good : flatGoodList) {
@@ -85,27 +100,6 @@ public class SalesTaxesBusinessServiceDelegate implements SalesTaxesBusinessServ
 				ksession.dispose();
 			}
 		}
-	}
-
-	private final KieSession initKSession() {
-
-		KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-
-		for (String ruleFile : drlFiles) {
-			logger.info(StringUtils.join("Trying to load file ", ruleFile, " from file system..."));
-			kbuilder.add(ResourceFactory.newClassPathResource(ruleFile, SalesTaxesBusinessServiceDelegate.class),
-					ResourceType.DRL);
-		}
-
-		Collection<KnowledgePackage> pkgs = kbuilder.getKnowledgePackages();
-		kbase.addKnowledgePackages(pkgs);
-		StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
-
-		//ksession.addEventListener(new DebugAgendaEventListener());
-		//ksession.addEventListener(new DebugRuleRuntimeEventListener());
-
-		return ksession;
 	}
 
 }
