@@ -102,8 +102,8 @@ public class SalesTaxesBusinessServiceDelegate implements SalesTaxesBusinessServ
 		kbase.addKnowledgePackages(pkgs);
 		StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
 
-		ksession.addEventListener(new DebugAgendaEventListener());
-		ksession.addEventListener(new DebugRuleRuntimeEventListener());
+		//ksession.addEventListener(new DebugAgendaEventListener());
+		//ksession.addEventListener(new DebugRuleRuntimeEventListener());
 
 		return ksession;
 	}
