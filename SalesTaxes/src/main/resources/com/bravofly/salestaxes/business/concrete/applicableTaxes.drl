@@ -1,0 +1,45 @@
+package com.bravofly.salestaxes.business.concrete
+
+import com.bravofly.salestaxes.business.concrete.drools.TaxesUtils
+import java.math.BigDecimal
+
+global org.slf4j.Logger logger
+
+dialect "mvel"
+
+rule "Apply Basic Tax"   
+    when
+        $gcf: com.bravofly.salestaxes.business.concrete.drools.GoodControlFact( basicSalesTaxApplied == false )
+        $g: com.bravofly.salestaxes.model.Good( this instanceof com.bravofly.salestaxes.model.BasicTaxApplicableGood ) from $gcf.theGood
+    then
+    	logger.info( "\"Apply Basic Tax\" rule applied" );
+    	
+    	$gcf.setBasicSalesTaxApplied( true );
+    	
+    	BigDecimal taxAmount = TaxesUtils.calculateBasicTaxAmount( $g.getRawPrice() ); 
+    	logger.info("taxAmount=" + taxAmount);
+    	
+    	$g.setAppliedTaxesAmount( $g.getAppliedTaxesAmount().add( taxAmount ) );
+    	$g.setTaxedPrice( $g.getTaxedPrice().add( taxAmount ) );  	
+    	
+    	update( $gcf );
+end
+
+
+rule "Apply Import Duty Tax"   
+    when
+        $gcf: com.bravofly.salestaxes.business.concrete.drools.GoodControlFact( importDutySalexTaxApplied == false )
+        $g: com.bravofly.salestaxes.model.Good( this instanceof com.bravofly.salestaxes.model.ImportDutyTaxApplicableGood ) from $gcf.theGood
+    then
+    	logger.info( "\"Apply Import Duty Tax\" rule applied" );
+    	
+    	$gcf.setImportDutySalexTaxApplied( true );
+    	
+    	BigDecimal taxAmount = TaxesUtils.calculateImportDutyTaxAmount( $g.getRawPrice() ); 
+    	logger.info("taxAmount=" + taxAmount);
+    	
+    	$g.setAppliedTaxesAmount( $g.getAppliedTaxesAmount().add( taxAmount ) );
+    	$g.setTaxedPrice( $g.getTaxedPrice().add( taxAmount ) );     	
+    	
+    	update( $gcf );		    	
+end
