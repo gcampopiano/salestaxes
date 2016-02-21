@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -62,7 +63,7 @@ public class SalesTaxesTestCase {
 				.good(new MusicCD(new BigDecimal("14.99"))).good(new ChocolateBar(new BigDecimal("0.85"))).build();
 
 		try {
-			this.businessService.compileReceipt(theReceipt);
+			this.businessService.compileReceipt(this.theReceipt);
 		} catch (SalesTaxesException e) {
 			logger.error("Following exception occurred compiling receipt:", e);
 			Assert.fail(e.getMessage());
@@ -95,7 +96,7 @@ public class SalesTaxesTestCase {
 		Assert.assertEquals(new BigDecimal("1.50"), totalSalesTaxes);
 		Assert.assertEquals(new BigDecimal("29.83"), totalAmount);
 
-		logger.info("###	Follows the receipt: " + theReceipt.toString());
+		logger.info(StringUtils.join("###	Follows the receipt: ", this.theReceipt.toString()));
 	}
 
 	@Test
@@ -105,7 +106,7 @@ public class SalesTaxesTestCase {
 				.good(new ImportedPerfume(new BigDecimal("47.50"))).build();
 
 		try {
-			this.businessService.compileReceipt(theReceipt);
+			this.businessService.compileReceipt(this.theReceipt);
 		} catch (SalesTaxesException e) {
 			logger.error("Following exception occurred compiling receipt:", e);
 			Assert.fail(e.getMessage());
@@ -134,7 +135,7 @@ public class SalesTaxesTestCase {
 		Assert.assertEquals(new BigDecimal("7.65"), totalSalesTaxes);
 		Assert.assertEquals(new BigDecimal("65.15"), totalAmount);
 
-		logger.info("###	Follows the receipt: " + theReceipt.toString());
+		logger.info(StringUtils.join("###	Follows the receipt: ", this.theReceipt.toString()));
 	}
 
 	@Test
@@ -144,7 +145,7 @@ public class SalesTaxesTestCase {
 				.good(new ImportedChocolateBox(new BigDecimal("11.25"))).build();
 
 		try {
-			this.businessService.compileReceipt(theReceipt);
+			this.businessService.compileReceipt(this.theReceipt);
 		} catch (SalesTaxesException e) {
 			logger.error("Following exception occurred compiling receipt:", e);
 			Assert.fail(e.getMessage());
@@ -177,14 +178,15 @@ public class SalesTaxesTestCase {
 
 		HeadachePills hp = (HeadachePills) (goodMap.get(HeadachePills.class.getCanonicalName()).get(0));
 		Assert.assertEquals(new BigDecimal("9.75"), hp.getTaxedPrice());
-		
-		ImportedChocolateBox icb = (ImportedChocolateBox) (goodMap.get(ImportedChocolateBox.class.getCanonicalName()).get(0));
-		Assert.assertEquals(new BigDecimal("11.85"), icb.getTaxedPrice());		
+
+		ImportedChocolateBox icb = (ImportedChocolateBox) (goodMap.get(ImportedChocolateBox.class.getCanonicalName())
+				.get(0));
+		Assert.assertEquals(new BigDecimal("11.85"), icb.getTaxedPrice());
 
 		Assert.assertEquals(new BigDecimal("6.70"), totalSalesTaxes);
 		Assert.assertEquals(new BigDecimal("74.68"), totalAmount);
-		
-		logger.info("###	Follows the receipt: " + theReceipt.toString());
+
+		logger.info(StringUtils.join("###	Follows the receipt: ", this.theReceipt.toString()));
 	}
 
 }
