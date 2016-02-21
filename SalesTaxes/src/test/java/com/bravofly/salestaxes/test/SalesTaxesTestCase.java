@@ -95,7 +95,7 @@ public class SalesTaxesTestCase {
 		Assert.assertEquals(new BigDecimal("1.50"), totalSalesTaxes);
 		Assert.assertEquals(new BigDecimal("29.83"), totalAmount);
 
-		logger.info("Follows the receipt: " + theReceipt.toString());
+		logger.info("###	Follows the receipt: " + theReceipt.toString());
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class SalesTaxesTestCase {
 		Assert.assertEquals(new BigDecimal("7.65"), totalSalesTaxes);
 		Assert.assertEquals(new BigDecimal("65.15"), totalAmount);
 
-		logger.info("Follows the receipt: " + theReceipt.toString());
+		logger.info("###	Follows the receipt: " + theReceipt.toString());
 	}
 
 	@Test
@@ -184,7 +184,7 @@ public class SalesTaxesTestCase {
 		Assert.assertEquals(new BigDecimal("6.70"), totalSalesTaxes);
 		Assert.assertEquals(new BigDecimal("74.68"), totalAmount);
 		
-		logger.info("Follows the receipt: " + theReceipt.toString());
+		logger.info("###	Follows the receipt: " + theReceipt.toString());
 	}
 
 }

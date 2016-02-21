@@ -12,7 +12,7 @@ rule "Apply Basic Tax"
         $gcf: com.bravofly.salestaxes.business.concrete.drools.GoodControlFact( basicSalesTaxApplied == false )
         $g: com.bravofly.salestaxes.model.Good( this instanceof com.bravofly.salestaxes.model.BasicTaxApplicableGood ) from $gcf.theGood
     then
-    	logger.info( "\"Apply Basic Tax\" rule applied" );
+    	logger.info( "\"Apply Basic Tax\" rule applied to " + $g );
     	
     	$gcf.setBasicSalesTaxApplied( true );
     	
@@ -31,7 +31,7 @@ rule "Apply Import Duty Tax"
         $gcf: com.bravofly.salestaxes.business.concrete.drools.GoodControlFact( importDutySalexTaxApplied == false )
         $g: com.bravofly.salestaxes.model.Good( this instanceof com.bravofly.salestaxes.model.ImportDutyTaxApplicableGood ) from $gcf.theGood
     then
-    	logger.info( "\"Apply Import Duty Tax\" rule applied" );
+    	logger.info( "\"Apply Import Duty Tax\" rule applied to " + $g );
     	
     	$gcf.setImportDutySalexTaxApplied( true );
     	
